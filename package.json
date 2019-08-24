@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "dev": "gatsby develop"
+    "dev": "gatsby develop",
+    "build": "gatsby build"
   },
   "devDependencies": {
     "gatsby": "^2.13.81"
