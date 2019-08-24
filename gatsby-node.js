@@ -1,8 +1,9 @@
 const path = require('path')
 const axios = require('axios')
+const _ = require('lodash')
 
 const url = 'https://jsonplaceholder.typicode.com/users'
-const albumsUrl = 'https://jsonplaceholder.typicode.com/albums?_limit=5'
+const albumsUrl = 'https://jsonplaceholder.typicode.com/albums?_limit=50'
 
 exports.createPages = async ({ actions }) => {
     const { createPage } = actions
@@ -49,13 +50,34 @@ exports.createPages = async ({ actions }) => {
 
     try {
         const { data } = await axios.get(albumsUrl)
+        const dataInPage = _.chunk(data, 10)
+
         createPage({
             path: '/albums',
             component: albumsComponent,
             context: {
-                albums: data
+                albums: dataInPage[0],
+                pagination: {
+                    pageTotal: dataInPage.length,
+                    pageCurrent: 1
+                }
             }
         })
+
+        dataInPage.forEach( (page, index) => {
+            createPage({
+                path: `/albums/page/${index + 1}`,
+                component: albumsComponent,
+                context: {
+                    albums: dataInPage[index],
+                    pagination: {
+                        pageTotal: dataInPage.length,
+                        pageCurrent: index + 1
+                    }
+                }
+            })
+        })
+
 
         data.forEach( album => {
             createPage({
