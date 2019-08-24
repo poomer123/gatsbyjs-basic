@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "dev": "gatsby develop"
+  },
+  "devDependencies": {
+    "gatsby": "^2.13.81"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "bulma": "^0.7.5",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0"
+  }
+}
