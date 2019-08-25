@@ -1,12 +1,15 @@
 const path = require('path')
 const axios = require('axios')
 const _ = require('lodash')
+const contentful = require('contentful')
 
 const url = 'https://jsonplaceholder.typicode.com/users'
 const albumsUrl = 'https://jsonplaceholder.typicode.com/albums?_limit=50'
 
 exports.createPages = async ({ actions }) => {
     const { createPage } = actions
+
+    const productsComponent = path.resolve(__dirname, 'src', 'templates', 'products.js')
 
     const usersComponent = path.resolve(__dirname, 'src', 'templates', 'users.js')
     const userComponent = path.resolve(__dirname, 'src', 'templates', 'user.js')
@@ -16,6 +19,29 @@ exports.createPages = async ({ actions }) => {
 
     const People = path.resolve(__dirname, 'src', 'templates', 'people.js')
     const Person = path.resolve(__dirname, 'src', 'templates', 'person.js')
+
+    try {
+        const spaceId = ''
+        const accessToken = ''
+        const client = contentful.createClient({
+            accessToken: accessToken,
+            space: spaceId
+        })
+        const { items } = await client.getEntries('product')
+        const products = items.map(product => product.fields)
+
+        createPage({
+            path: '/products',
+            component: productsComponent,
+            context: {
+                products: products
+            }
+        })
+
+    } catch (error) {
+        return Promise.reject(err)
+    }
+
 
     try {
         const usersList = await axios.get(url)
