@@ -6,8 +6,10 @@ const contentful = require('contentful')
 const url = 'https://jsonplaceholder.typicode.com/users'
 const albumsUrl = 'https://jsonplaceholder.typicode.com/albums?_limit=50'
 
-exports.createPages = async ({ actions }) => {
+exports.createPages = async ({ actions, graphql }) => {
     const { createPage } = actions
+
+    const pagesComponent = path.resolve(__dirname, 'src', 'templates', 'pages.js')
 
     const productsComponent = path.resolve(__dirname, 'src', 'templates', 'products.js')
 
@@ -21,15 +23,13 @@ exports.createPages = async ({ actions }) => {
     const Person = path.resolve(__dirname, 'src', 'templates', 'person.js')
 
     try {
-        const spaceId = ''
-        const accessToken = ''
         const client = contentful.createClient({
-            accessToken: accessToken,
-            space: spaceId
+            accessToken: process.env.ACCESS_TOKEN,
+            space: process.env.SPACE_ID
         })
         const { items } = await client.getEntries('product')
         const products = items.map(product => product.fields)
-
+        
         createPage({
             path: '/products',
             component: productsComponent,
@@ -39,7 +39,7 @@ exports.createPages = async ({ actions }) => {
         })
 
     } catch (error) {
-        return Promise.reject(err)
+        return Promise.reject(error)
     }
 
 
@@ -139,4 +139,33 @@ exports.createPages = async ({ actions }) => {
             }
         })
     })
+
+    try {
+        const query = `
+            query {
+                allSitePage {
+                    edges {
+                        node {
+                            id
+                            path
+                        }
+                    }
+                }
+            }
+        `
+        const { data, errors } = await graphql(query)
+        const pages = data.allSitePage.edges.map(({ node }) => node)
+        if (errors) {
+            return Promise.reject(errors)
+        }
+        createPage({
+            path: '/pages',
+            component: pagesComponent,
+            context: {
+                pages: pages
+            }
+        })
+    } catch(errors) {
+        return Promise.reject(errors)
+    }
 }
