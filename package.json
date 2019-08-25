@@ -5,6 +5,7 @@
   },
   "devDependencies": {
     "gatsby": "^2.13.81",
+    "gatsby-plugin-i18n": "^1.0.1",
     "gatsby-source-filesystem": "^2.1.18",
     "gatsby-transformer-remark": "^2.6.19"
   },
@@ -13,8 +14,10 @@
     "bulma": "^0.7.5",
     "contentful": "^7.9.1",
     "cross-env": "^5.2.0",
+    "i18next": "^17.0.12",
     "lodash": "^4.17.15",
     "react": "^16.9.0",
-    "react-dom": "^16.9.0"
+    "react-dom": "^16.9.0",
+    "react-i18next": "^10.12.2"
   }
 }

@@ -13,6 +13,7 @@ module.exports = {
                 path: `${__dirname}/src/markdowns`,
             }
         },
-        'gatsby-transformer-remark'
+        'gatsby-transformer-remark',
+        'gatsby-plugin-i18n'
     ]
 }
