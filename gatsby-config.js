@@ -7,5 +7,12 @@ module.exports = {
         image: '/gatsby.png'
     },
     plugins: [
+        {
+            resolve: 'gatsby-source-filesystem',
+            options: {
+                path: `${__dirname}/src/markdowns`,
+            }
+        },
+        'gatsby-transformer-remark'
     ]
 }

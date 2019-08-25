@@ -2,6 +2,7 @@ const path = require('path')
 const axios = require('axios')
 const _ = require('lodash')
 const contentful = require('contentful')
+const { extractFileName } = require('./src/helper')
 
 const url = 'https://jsonplaceholder.typicode.com/users'
 const albumsUrl = 'https://jsonplaceholder.typicode.com/albums?_limit=50'
@@ -21,6 +22,9 @@ exports.createPages = async ({ actions, graphql }) => {
 
     const People = path.resolve(__dirname, 'src', 'templates', 'people.js')
     const Person = path.resolve(__dirname, 'src', 'templates', 'person.js')
+
+    const articlesComponent = path.resolve(__dirname, 'src', 'templates', 'articles.js')
+    const articleComponent = path.resolve(__dirname, 'src', 'templates', 'article.js')
 
     try {
         const client = contentful.createClient({
@@ -166,6 +170,65 @@ exports.createPages = async ({ actions, graphql }) => {
             }
         })
     } catch(errors) {
+        return Promise.reject(errors)
+    }
+
+    try {
+        const query = `
+            query {
+                allMarkdownRemark {
+                    edges {
+                        node {
+                            fileAbsolutePath
+                            html
+                            frontmatter {
+                                date
+                                title
+                            }
+                            headings {
+                                value
+                            }
+                        }
+                    }
+                }
+            }
+        `
+        const { data, errors } = await graphql(query)
+
+        if (errors) {
+            return Promise.reject(errors)
+        }
+        const { edges } = data.allMarkdownRemark
+        const articles = edges.map( ({ node }) => {
+
+            const { fileAbsolutePath } = node
+            const articlePath = extractFileName(fileAbsolutePath)
+
+            return {
+                ...node,
+                slug: articlePath
+            }
+        })
+
+        createPage({
+            path: '/articles',
+            component: articlesComponent,
+            context: {
+                articles: articles
+            }
+        })
+
+        articles.forEach( article => {
+            createPage({
+                path: `/articles/${article.slug}`,
+                component: articleComponent,
+                context: {
+                    filePath: article.fileAbsolutePath
+                }
+            })
+        })
+
+    } catch (errors) {
         return Promise.reject(errors)
     }
 }

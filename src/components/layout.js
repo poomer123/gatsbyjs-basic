@@ -11,6 +11,8 @@ export default function ( { children } ) {
                 <span> | </span>
                 <Link to="/about">เกี่ยวกับ</Link>
                 <span> | </span>
+                <Link to="/articles">บทความ</Link>
+                <span> | </span>
                 <Link to="/users">ผู้ใช้</Link>
                 <span> | </span>
                 <Link to="/albums">อัลบัม</Link>
